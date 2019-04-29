@@ -193,6 +193,15 @@ module.exports = function (context) {
                 podfileContents.push(`\tpod '${podName}'${suffix}`);
             }
             podfileContents.push('end');
+            podfileContents.push(`post_install do |installer|`);
+            podfileContents.push(`    installer.pods_project.targets.each do |target|`);
+            podfileContents.push(`        target.build_configurations.each do |config|`);
+            podfileContents.push(`            config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""`);
+            podfileContents.push(`            config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"`);
+            podfileContents.push(`            config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"`);
+            podfileContents.push(`        end`);
+            podfileContents.push(`    end`);
+            podfileContents.push(`end`);
             fs.writeFileSync('platforms/ios/Podfile', podfileContents.join('\n'));
 
             var debugXcContents = fs.readFileSync('platforms/ios/cordova/build-debug.xcconfig', 'utf8');
